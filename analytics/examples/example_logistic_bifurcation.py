@@ -8,6 +8,7 @@ app = marimo.App(width="medium")
 def _():
     import numpy as np
     import matplotlib.pyplot as plt
+
     return np, plt
 
 
@@ -23,7 +24,7 @@ def _(np):
 
     for r in R:
         x = np.random.uniform(0, 1)
-        for i in range(n + m): 
+        for i in range(n + m):
             x = f(x, r)
             if i > n:
                 r_vals.append(r)
@@ -35,7 +36,7 @@ def _(np):
 def _(plt, r_vals, x_vals):
     # Plotting the bifurcation diagram
     plt.figure(figsize=(15, 5))
-    plt.plot(r_vals, x_vals, ',k', alpha=0.25)
+    plt.plot(r_vals, x_vals, ",k", alpha=0.25)
     plt.xlabel("r")
     plt.ylabel("x")
     plt.show()
