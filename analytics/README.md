@@ -2,7 +2,7 @@
 
 ## Running the Code
 
-This repository uses the [uv](https://docs.astral.sh/uv/getting-started/installation/) package manager. To use it, you must first install `uv` using the `pip` package manager.
+This repository uses the [uv](https://docs.astral.sh/uv/) package manager. To use it, you must first install `uv` using the `pip` package manager.
 
 ```bash
 pip install uv
