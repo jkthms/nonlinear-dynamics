@@ -1,6 +1,6 @@
 # Model Configuration
 
-N = 100           # Number of oscillators
+N = 5           # Number of oscillators
 K = 1.5           # Coupling strength
-dt = 0.01         # Time step (seconds)
-n_steps = 1000    # Number of simulation steps
+dt = 0.025        # Time step (seconds)
+n_steps = 400    # Number of simulation steps

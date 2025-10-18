@@ -1,13 +1,13 @@
+use anyhow::Result;
 use serde::Deserialize;
 use std::fs;
-use anyhow::Result;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    pub N: usize, // Number of oscillators (N)
-    pub K: f64, // Coupling strength of the oscillators to each other (K)
-    pub dt: f64, // Discretisation time step in seconds
-    pub n_steps: usize // The number of discrete time steps to simulate
+    pub N: usize,       // Number of oscillators (N)
+    pub K: f64,         // Coupling strength of the oscillators to each other (K)
+    pub dt: f64,        // Discretisation time step in seconds
+    pub n_steps: usize, // The number of discrete time steps to simulate
 }
 
 impl Config {

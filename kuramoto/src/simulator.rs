@@ -1,6 +1,15 @@
 use crate::config::Config;
 use rand::Rng;
 use rand_distr::{Distribution, Normal};
+use anyhow::Result;
+use std::fs::File;
+use std::sync::Arc;
+use arrow::array::{Float64Array, UInt64Array};
+use arrow::datatypes::{DataType, Field, Schema};
+use arrow::record_batch::RecordBatch;
+use parquet::arrow::ArrowWriter;
+use parquet::file::properties::WriterProperties;
+
 
 pub struct Simulator {
     pub config: Config,
@@ -10,10 +19,10 @@ pub struct Simulator {
 
 impl Simulator {
     pub fn new(config: Config) -> Self {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         // Initialise the phases of the oscillators randomly between 0 and 2π
-        let phases: Vec<f64> = (0..config.N).map(|_| rng.gen_range(0.0..2.0 * std::f64::consts::PI)).collect();
+        let phases: Vec<f64> = (0..config.N).map(|_| rng.random_range(0.0..2.0 * std::f64::consts::PI)).collect();
 
         // Initialise the frequencies of the oscillators randomly from a normal distribution
         // with mean 1.0 and variance 0.1
@@ -48,9 +57,49 @@ impl Simulator {
         self.phases = new_phases;
     }
 
-    pub fn run(&mut self) {
-        for _ in 0..self.config.n_steps {
+    pub fn run(&mut self) -> Result<()> {
+        // Define the schema for the output .pq file
+        let schema = Schema::new(
+            vec![
+                Field::new("time", DataType::UInt64, false),
+                Field::new("oscillator", DataType::UInt64, false),
+                Field::new("phase", DataType::Float64, false),
+                Field::new("frequency", DataType::Float64, false),
+            ]
+        );
+
+        // Create the output file
+        let file = File::create("kuramoto.pq")?;
+        let props = WriterProperties::builder().build();
+        let mut writer = ArrowWriter::try_new(file, Arc::new(schema.clone()), Some(props))?;
+
+        // Run the step-wise simulation and collect data at each step
+        for step in 0..self.config.n_steps {
             self.step();
+
+            // Prepare the output data for this time step
+            let timestamps: Vec<u64> = vec![step as u64; self.config.N];
+            let oscillator_ids: Vec<u64> = (0..self.config.N as u64).collect();
+            let phases: Vec<f64> = self.phases.clone();
+            let frequencies: Vec<f64> = self.frequencies.clone();
+
+            // Create the record batch using the Arrow array types
+            let time_array = UInt64Array::from(timestamps);
+            let oscillator_array = UInt64Array::from(oscillator_ids);
+            let phase_array = Float64Array::from(phases);
+            let frequency_array = Float64Array::from(frequencies);
+
+            let record_batch = RecordBatch::try_new(Arc::new(schema.clone()), vec![
+                Arc::new(time_array),
+                Arc::new(oscillator_array),
+                Arc::new(phase_array),
+                Arc::new(frequency_array),
+            ])?;
+
+            writer.write(&record_batch)?;
         }
+
+        writer.close()?;
+        Ok(())
     }
 }
