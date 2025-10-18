@@ -8,6 +8,33 @@ $$
 
 where $\theta_i$ is the phase of the $i$-th oscillator, $\omega_i$ is the natural frequency of the $i$-th oscillator, $K$ is the coupling strength, and $N$ is the number of oscillators.
 
+These oscillators evolve dynamically on the unit circle and (in the case below) can converge over time to become in phase:
+
+![Kuramoto Model Animation](utils/kuramoto_animation.gif)
+
+## Running
+
+To run this code, ensure you have Rust and Cargo installed. Once the environment is set up, you can execute the program using the following steps:
+
+```bash
+cargo run
+```
+
+This command will compile the implementation of the Kuramoto model and run the program, generating an output parquet file `kuramoto.pq`.
+
+## Plotting
+
+The plotting library is written in Python and is contained in `utils/`, you can generate the plots above using the `uv` package manager:
+
+```bash
+cd utils/
+uv run main.py
+```
+
+This will generate a .GIF animation for the evolution of the system and a plot of the convergence of the order parameter of the system over time:
+
+![Order Parameter Plot](utils/order_parameter.png)
+
 ## Discretisation
 
 This differential equation can be discretised in time to give the following forward-Euler update:
