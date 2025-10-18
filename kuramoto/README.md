@@ -43,4 +43,4 @@ $$
 \theta_i(t + \Delta t) = \theta_i(t) + \Delta t \left( \omega_i + \frac{K}{N} \sum_{j=1}^{N} \sin(\theta_j(t) - \theta_i(t)) \right)
 $$
 
-The package contained herein contains a simple implementation of a simulator for the Kuramoto model.
+The package contained herein contains a simple implementation of this forward Euler update starting from a random normal configuration.
